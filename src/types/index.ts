@@ -9,7 +9,7 @@ interface Task {
   id: string;
   text: string;
   date: string; // YYYY-MM-DD
-  order: number; // Порядок отображения в дне
+  order: number;
   color?: string;
 }
 

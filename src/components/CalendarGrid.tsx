@@ -17,12 +17,18 @@ interface Props {
   year: number;
   month: number;
   setSelectedDate: React.Dispatch<React.SetStateAction<[number, number]>>;
+  countries: { countryCode: string; name: string }[];
+  selectedCountry: string;
+  setSelectedCountry: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const CalendarGrid: React.FC<Props> = ({
   year,
   month,
   setSelectedDate,
+  countries,
+  selectedCountry,
+  setSelectedCountry,
 }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [editingDate, setEditingDate] = useState<string | null>(null);
@@ -169,6 +175,17 @@ export const CalendarGrid: React.FC<Props> = ({
     <MainWrapper>
       <FilterWrapper>
         <div className='selector-wrapper'>
+          <select
+            value={selectedCountry}
+            onChange={(e) => setSelectedCountry(e.target.value)}
+            style={{ marginRight: 8 }}
+          >
+            {countries.map((c) => (
+              <option key={c.countryCode} value={c.countryCode}>
+                {c.name}
+              </option>
+            ))}
+          </select>
           <select
             value={month}
             onChange={(e) => {
