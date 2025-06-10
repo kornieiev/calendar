@@ -1,4 +1,4 @@
-export interface DayCell {
+interface DayCell {
   day: number | null;
   date: string | null;
   label?: string;
@@ -10,6 +10,7 @@ interface Task {
   text: string;
   date: string; // YYYY-MM-DD
   order: number; // Порядок отображения в дне
+  color?: string;
 }
 
 export type { DayCell, Task };

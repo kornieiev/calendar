@@ -10,6 +10,7 @@ import {
   TaskItem,
   TaskInputWrapper,
   FilterWrapper,
+  MainWrapper,
 } from "./CalendarGrid.styles";
 
 interface Props {
@@ -77,6 +78,11 @@ export const CalendarGrid: React.FC<Props> = ({
 
   const days: DayCell[] = generateCalendarGrid(year, month);
 
+  const getRandomColor = () =>
+    `#${Math.floor(Math.random() * 16777215)
+      .toString(16)
+      .padStart(6, "0")}`;
+
   const handleAddTask = (date: string) => {
     if (inputText.trim() === "") return;
     const tasksInDate = tasks.filter((t) => t.date === date);
@@ -85,6 +91,7 @@ export const CalendarGrid: React.FC<Props> = ({
       text: inputText.trim(),
       date,
       order: tasksInDate.length,
+      color: getRandomColor(),
     };
     setTasks((prev) => [...prev, newTask]);
     setInputText("");
@@ -159,7 +166,7 @@ export const CalendarGrid: React.FC<Props> = ({
   };
 
   return (
-    <>
+    <MainWrapper>
       <FilterWrapper>
         <div className='selector-wrapper'>
           <select
@@ -209,7 +216,6 @@ export const CalendarGrid: React.FC<Props> = ({
             placeholder='Find task...'
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            style={{ margin: "8px 0", width: "100%", fontSize: 14, padding: 4 }}
           />
         </div>
       </FilterWrapper>
@@ -221,7 +227,6 @@ export const CalendarGrid: React.FC<Props> = ({
 
         {days.map((cell, idx) => {
           const filteredTasks = tasksForDate(cell.date);
-          // if (search.trim() && filteredTasks.length === 0) return null;
 
           return (
             <DayCellDiv
@@ -252,6 +257,7 @@ export const CalendarGrid: React.FC<Props> = ({
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={(e) => handleTaskDrop(e, task.id)}
                       onDoubleClick={() => handleEditTask(task)}
+                      borderColor={task.color || "darkmagenta"}
                     >
                       {editingTaskId === task.id ? (
                         <input
@@ -278,6 +284,7 @@ export const CalendarGrid: React.FC<Props> = ({
                 editingDate !== null && (
                   <TaskInputWrapper onClick={(e) => e.stopPropagation()}>
                     <input
+                      className='task-input'
                       type='text'
                       autoFocus
                       value={inputText}
@@ -293,6 +300,6 @@ export const CalendarGrid: React.FC<Props> = ({
           );
         })}
       </GridContainer>
-    </>
+    </MainWrapper>
   );
 };

@@ -1,5 +1,15 @@
 import type { DayCell } from "../types/index";
 
+// Вспомогательная функция
+function isFirstOrLastDayOfMonth(
+  day: number,
+  year: number,
+  month: number
+): boolean {
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  return day === 1 || day === daysInMonth;
+}
+
 export function generateCalendarGrid(year: number, month: number): DayCell[] {
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDayOfMonth = new Date(year, month, 1).getDay();
@@ -11,7 +21,6 @@ export function generateCalendarGrid(year: number, month: number): DayCell[] {
   const prevMonthYear = month === 0 ? year - 1 : year;
   const daysInPrevMonth = new Date(prevMonthYear, prevMonth + 1, 0).getDate();
 
-  // Пустые ячейки до первого числа месяца
   const prevEmptyCells = firstDayOfMonth;
   for (let i = 0; i < prevEmptyCells; i++) {
     const day = daysInPrevMonth - prevEmptyCells + i + 1;
@@ -22,7 +31,9 @@ export function generateCalendarGrid(year: number, month: number): DayCell[] {
       "en",
       { month: "short" }
     );
-    const label = `${paddedDay} ${monthShort}`;
+    const label = isFirstOrLastDayOfMonth(day, prevMonthYear, prevMonth)
+      ? `${paddedDay} ${monthShort}`
+      : `${day}`;
     result.push({ day, date, label, isCurrentMonth: false });
   }
 
@@ -34,12 +45,13 @@ export function generateCalendarGrid(year: number, month: number): DayCell[] {
     const monthShort = new Date(year, month, day).toLocaleString("en", {
       month: "short",
     });
-    const label = `${paddedDay} ${monthShort}`;
+    const label = isFirstOrLastDayOfMonth(day, year, month)
+      ? `${paddedDay} ${monthShort}`
+      : `${day}`;
     result.push({ day, date, label, isCurrentMonth: true });
   }
 
   // 3. Следующий месяц
-  // Сколько еще ячеек нужно до конца строки
   let nextDays = 0;
   while ((result.length + nextDays) % 7 !== 0) {
     nextDays++;
@@ -54,11 +66,13 @@ export function generateCalendarGrid(year: number, month: number): DayCell[] {
       "en",
       { month: "short" }
     );
-    const label = `${paddedDay} ${monthShort}`;
+    const label = isFirstOrLastDayOfMonth(i, nextMonthYear, nextMonth)
+      ? `${paddedDay} ${monthShort}`
+      : `${i}`;
     result.push({ day: i, date, label, isCurrentMonth: false });
   }
 
-  // 4. Добавляем еще одну строку из 7 ячеек следующего месяца
+  // 4. Еще одна строка следующего месяца
   const lastDay = nextDays;
   for (let i = 1; i <= 7; i++) {
     const day = lastDay + i;
@@ -69,7 +83,9 @@ export function generateCalendarGrid(year: number, month: number): DayCell[] {
       "en",
       { month: "short" }
     );
-    const label = `${paddedDay} ${monthShort}`;
+    const label = isFirstOrLastDayOfMonth(day, nextMonthYear, nextMonth)
+      ? `${paddedDay} ${monthShort}`
+      : `${day}`;
     result.push({ day, date, label, isCurrentMonth: false });
   }
 
