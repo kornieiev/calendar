@@ -9,14 +9,20 @@ import {
   TaskList,
   TaskItem,
   TaskInputWrapper,
+  FilterWrapper,
 } from "./CalendarGrid.styles";
 
 interface Props {
   year: number;
   month: number;
+  setSelectedDate: React.Dispatch<React.SetStateAction<[number, number]>>;
 }
 
-export const CalendarGrid: React.FC<Props> = ({ year, month }) => {
+export const CalendarGrid: React.FC<Props> = ({
+  year,
+  month,
+  setSelectedDate,
+}) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [editingDate, setEditingDate] = useState<string | null>(null);
   const [inputText, setInputText] = useState("");
@@ -24,6 +30,8 @@ export const CalendarGrid: React.FC<Props> = ({ year, month }) => {
   const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null);
   const [editingTaskText, setEditingTaskText] = useState("");
+
+  const [search, setSearch] = useState("");
 
   const handleDragStart = (e: React.DragEvent, taskId: string) => {
     setDraggedTaskId(taskId);
@@ -84,7 +92,12 @@ export const CalendarGrid: React.FC<Props> = ({ year, month }) => {
   };
 
   const tasksForDate = (date: string | null) =>
-    tasks.filter((task) => task.date === date);
+    tasks.filter(
+      (task) =>
+        task.date === date &&
+        (!search.trim() ||
+          task.text.toLowerCase().includes(search.toLowerCase()))
+    );
 
   const handleTaskDrop = (e: React.DragEvent, targetTaskId: string) => {
     e.preventDefault();
@@ -147,12 +160,69 @@ export const CalendarGrid: React.FC<Props> = ({ year, month }) => {
 
   return (
     <>
+      <FilterWrapper>
+        <div className='selector-wrapper'>
+          <select
+            value={month}
+            onChange={(e) => {
+              const newMonth = Number(e.target.value);
+              setSelectedDate([year, newMonth]);
+            }}
+          >
+            {[
+              "January",
+              "February",
+              "March",
+              "April",
+              "May",
+              "June",
+              "July",
+              "August",
+              "September",
+              "October",
+              "November",
+              "December",
+            ].map((m, i) => (
+              <option key={i} value={i}>
+                {m}
+              </option>
+            ))}
+          </select>
+          <select
+            value={year}
+            onChange={(e) => {
+              const newYear = Number(e.target.value);
+              setSelectedDate([newYear, month]);
+            }}
+          >
+            {Array.from({ length: 11 }, (_, i) => 2020 + i).map((y) => (
+              <option key={y} value={y}>
+                {y}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className='input-wrapper'>
+          <label>Find Task:</label>
+          <input
+            type='text'
+            placeholder='Find task...'
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{ margin: "8px 0", width: "100%", fontSize: 14, padding: 4 }}
+          />
+        </div>
+      </FilterWrapper>
+
       <GridContainer>
         {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
           <WeekDayHeader key={day}>{day}</WeekDayHeader>
         ))}
 
         {days.map((cell, idx) => {
+          const filteredTasks = tasksForDate(cell.date);
+          // if (search.trim() && filteredTasks.length === 0) return null;
+
           return (
             <DayCellDiv
               key={idx}
@@ -172,7 +242,7 @@ export const CalendarGrid: React.FC<Props> = ({ year, month }) => {
 
               {/* Задачи */}
               <TaskList>
-                {tasksForDate(cell.date)
+                {filteredTasks
                   .sort((a, b) => a.order - b.order)
                   .map((task) => (
                     <TaskItem

@@ -3,7 +3,7 @@ import styled, { css } from "styled-components";
 export const GridContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  grid-auto-rows: 120px;
+  grid-template-rows: auto repeat(6, 120px);
   gap: 1px;
   background-color: #ccc;
   padding: 4px;
@@ -13,8 +13,9 @@ export const GridContainer = styled.div`
 export const WeekDayHeader = styled.div`
   text-align: center;
   font-weight: bold;
-  padding: 4px 0;
+  padding: 10px 0;
   background-color: green;
+  line-height: 1.2;
 `;
 
 export const DayCellDiv = styled.div<{
@@ -72,5 +73,34 @@ export const TaskInputWrapper = styled.div`
     width: 100%;
     font-size: 12px;
     padding: 2px;
+  }
+`;
+
+export const FilterWrapper = styled.div`
+  margin-top: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 60px;
+
+  .selector-wrapper {
+    padding: 2px;
+    display: flex;
+    gap: 16px;
+  }
+
+  .input-wrapper {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+    font-size: 12px;
+    padding: 2px;
+
+    label {
+      white-space: nowrap;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+    }
   }
 `;

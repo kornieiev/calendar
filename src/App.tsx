@@ -1,15 +1,27 @@
+import { useState } from "react";
 import "./App.css";
 import { CalendarGrid } from "./components/CalendarGrid";
 
-import { generateCalendarGrid } from "./utils/generateCalendarGrid";
+function getToday(): [number, number, number] {
+  const now = new Date();
+  return [now.getFullYear(), now.getMonth(), now.getDate()];
+}
 
-const days = generateCalendarGrid(2018, 4); // март 2018 (month: 2 потому что 0-based)
-console.log(days);
+const today = getToday();
 
 function App() {
+  const [selectedDate, setSelectedDate] = useState<[number, number]>([
+    today[0],
+    today[1],
+  ]);
+
   return (
     <>
-      <CalendarGrid year={2025} month={4} />
+      <CalendarGrid
+        year={selectedDate[0]}
+        month={selectedDate[1]}
+        setSelectedDate={setSelectedDate}
+      />
     </>
   );
 }
