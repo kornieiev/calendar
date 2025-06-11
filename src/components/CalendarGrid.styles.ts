@@ -22,6 +22,8 @@ export const DayCellDiv = styled.div<{
   isDragOver?: boolean;
   isCurrentMonth?: boolean;
 }>`
+  /* overflow: hidden; */
+  overflow: visible;
   background-color: rgba(255, 255, 255, 0.9);
   color: black;
   padding: 4px;
@@ -29,6 +31,8 @@ export const DayCellDiv = styled.div<{
   font-size: 14px;
   cursor: pointer;
   border-radius: 4px;
+  min-height: 100px;
+  overflow-y: auto; // вертикальный скролл при переполнении
 
   .day-number {
     font-weight: bold;
@@ -39,6 +43,12 @@ export const DayCellDiv = styled.div<{
     min-width: 10px;
     padding: 4px 8px;
     border-radius: 12px;
+  }
+  .holiday {
+    color: #d32f2f;
+    font-weight: 600;
+    font-size: 12;
+    margin: 2px 0;
   }
 
   ${({ isCurrentMonth }) =>
@@ -62,17 +72,27 @@ export const TaskList = styled.div`
   margin-top: 4px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
+  max-height: 100px; // ограничение по высоте (можно скорректировать)
+  /* overflow-y: auto; // вертикальный скролл при переполнении */
 `;
 
 export const TaskItem = styled.div<{ borderColor?: string }>`
-  background: transparent;
+  background: rgb(255, 255, 255);
   padding: 2px 4px;
   border-left: 5px solid ${({ borderColor }) => borderColor || "darkmagenta"};
-  font-size: 1rem;
+  font-size: 0.8rem;
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: left;
+  min-height: 1.1rem;
+  border-top-right-radius: 2px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 2px;
+  border-top-left-radius: 2px;
+
+  outline: 1px solid rgba(0, 0, 0, 0.2);
+
   input {
     outline: none;
     background: red;

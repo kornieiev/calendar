@@ -15,6 +15,7 @@ function App() {
   >([]);
   console.log("countries", countries);
   const [selectedCountry, setSelectedCountry] = useState<string>("");
+  const [holidays, setHolidays] = useState<any[]>([]);
 
   useEffect(() => {
     fetch("https://date.nager.at/api/v3/AvailableCountries")
@@ -38,6 +39,17 @@ function App() {
     today[1],
   ]);
 
+  // Получение праздников при изменении года или страны
+  useEffect(() => {
+    if (!selectedCountry) return;
+    const year = selectedDate[0];
+    fetch(
+      `https://date.nager.at/api/v3/PublicHolidays/${year}/${selectedCountry}`
+    )
+      .then((res) => res.json())
+      .then((data) => setHolidays(data));
+  }, [selectedCountry, selectedDate]);
+
   return (
     <>
       <CalendarGrid
@@ -47,6 +59,7 @@ function App() {
         countries={countries}
         selectedCountry={selectedCountry}
         setSelectedCountry={setSelectedCountry}
+        holidays={holidays}
       />
     </>
   );

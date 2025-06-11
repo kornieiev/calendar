@@ -20,6 +20,7 @@ interface Props {
   countries: { countryCode: string; name: string }[];
   selectedCountry: string;
   setSelectedCountry: React.Dispatch<React.SetStateAction<string>>;
+  holidays: any[];
 }
 
 export const CalendarGrid: React.FC<Props> = ({
@@ -29,6 +30,7 @@ export const CalendarGrid: React.FC<Props> = ({
   countries,
   selectedCountry,
   setSelectedCountry,
+  holidays,
 }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [editingDate, setEditingDate] = useState<string | null>(null);
@@ -244,6 +246,7 @@ export const CalendarGrid: React.FC<Props> = ({
 
         {days.map((cell, idx) => {
           const filteredTasks = tasksForDate(cell.date);
+          const holiday = holidays.find((h) => h.date === cell.date);
 
           return (
             <DayCellDiv
@@ -261,6 +264,13 @@ export const CalendarGrid: React.FC<Props> = ({
               onDragLeave={() => handleDragLeave(cell)}
             >
               <div className='day-number'>{cell.label}</div>
+
+              {/* Праздник */}
+              {holiday && (
+                <div className='holiday'>
+                  {holiday.localName || holiday.name}
+                </div>
+              )}
 
               {/* Задачи */}
               <TaskList>
