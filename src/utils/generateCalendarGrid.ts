@@ -1,6 +1,6 @@
 import type { DayCell } from "../types/index";
 
-// Вспомогательная функция
+// Checks is the day of month first or last
 function isFirstOrLastDayOfMonth(
   day: number,
   year: number,
@@ -16,7 +16,7 @@ export function generateCalendarGrid(year: number, month: number): DayCell[] {
 
   const result: DayCell[] = [];
 
-  // 1. Предыдущий месяц
+  // 1. Previous month
   const prevMonth = month === 0 ? 11 : month - 1;
   const prevMonthYear = month === 0 ? year - 1 : year;
   const daysInPrevMonth = new Date(prevMonthYear, prevMonth + 1, 0).getDate();
@@ -37,7 +37,7 @@ export function generateCalendarGrid(year: number, month: number): DayCell[] {
     result.push({ day, date, label, isCurrentMonth: false });
   }
 
-  // 2. Текущий месяц
+  // 2. Current month
   for (let day = 1; day <= daysInMonth; day++) {
     const paddedMonth = String(month + 1).padStart(2, "0");
     const paddedDay = String(day).padStart(2, "0");
@@ -51,7 +51,7 @@ export function generateCalendarGrid(year: number, month: number): DayCell[] {
     result.push({ day, date, label, isCurrentMonth: true });
   }
 
-  // 3. Следующий месяц
+  // 3. Next month
   let nextDays = 0;
   while ((result.length + nextDays) % 7 !== 0) {
     nextDays++;
@@ -72,7 +72,7 @@ export function generateCalendarGrid(year: number, month: number): DayCell[] {
     result.push({ day: i, date, label, isCurrentMonth: false });
   }
 
-  // 4. Еще одна строка следующего месяца
+  // 4. Another line next month
   const lastDay = nextDays;
   for (let i = 1; i <= 7; i++) {
     const day = lastDay + i;

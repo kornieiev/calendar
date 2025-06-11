@@ -22,7 +22,6 @@ export const DayCellDiv = styled.div<{
   isDragOver?: boolean;
   isCurrentMonth?: boolean;
 }>`
-  /* overflow: hidden; */
   overflow: visible;
   background-color: rgba(255, 255, 255, 0.9);
   color: black;
@@ -32,7 +31,7 @@ export const DayCellDiv = styled.div<{
   cursor: pointer;
   border-radius: 4px;
   min-height: 100px;
-  overflow-y: auto; // вертикальный скролл при переполнении
+  overflow-y: auto;
 
   .day-number {
     font-weight: bold;
@@ -73,8 +72,7 @@ export const TaskList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
-  max-height: 100px; // ограничение по высоте (можно скорректировать)
-  /* overflow-y: auto; // вертикальный скролл при переполнении */
+  max-height: 100px;
 `;
 
 export const TaskItem = styled.div<{ borderColor?: string }>`
@@ -96,6 +94,17 @@ export const TaskItem = styled.div<{ borderColor?: string }>`
   input {
     outline: none;
     background: red;
+  }
+
+  button {
+    float: right;
+    margin-left: 8;
+    background: transparent;
+    border: none;
+    color: #d32f2f;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
   }
 `;
 

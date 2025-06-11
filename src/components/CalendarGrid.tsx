@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { generateCalendarGrid } from "../utils/generateCalendarGrid";
-import type { DayCell, Task } from "../types/index";
+import type { DayCell, Holiday, Task } from "../types/index";
 import { v4 as uuidv4 } from "uuid";
 import {
   GridContainer,
@@ -12,6 +12,7 @@ import {
   FilterWrapper,
   MainWrapper,
 } from "./CalendarGrid.styles";
+import { getRandomColor } from "../utils/randomColor";
 
 interface Props {
   year: number;
@@ -20,7 +21,9 @@ interface Props {
   countries: { countryCode: string; name: string }[];
   selectedCountry: string;
   setSelectedCountry: React.Dispatch<React.SetStateAction<string>>;
-  holidays: any[];
+  holidays: Holiday[];
+  tasks?: Task[];
+  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
 }
 
 export const CalendarGrid: React.FC<Props> = ({
@@ -31,8 +34,10 @@ export const CalendarGrid: React.FC<Props> = ({
   selectedCountry,
   setSelectedCountry,
   holidays,
+  tasks,
+  setTasks,
 }) => {
-  const [tasks, setTasks] = useState<Task[]>([]);
+  // const [tasks, setTasks] = useState<Task[]>(tasksFromLS ?? []);
   const [editingDate, setEditingDate] = useState<string | null>(null);
   const [inputText, setInputText] = useState("");
   const [draggedTaskId, setDraggedTaskId] = useState<string | null>(null);
@@ -86,14 +91,9 @@ export const CalendarGrid: React.FC<Props> = ({
 
   const days: DayCell[] = generateCalendarGrid(year, month);
 
-  const getRandomColor = () =>
-    `#${Math.floor(Math.random() * 16777215)
-      .toString(16)
-      .padStart(6, "0")}`;
-
   const handleAddTask = (date: string) => {
     if (inputText.trim() === "") return;
-    const tasksInDate = tasks.filter((t) => t.date === date);
+    const tasksInDate = (tasks ?? []).filter((t) => t.date === date);
     const newTask: Task = {
       id: uuidv4(),
       text: inputText.trim(),
@@ -107,7 +107,7 @@ export const CalendarGrid: React.FC<Props> = ({
   };
 
   const tasksForDate = (date: string | null) =>
-    tasks.filter(
+    (tasks ?? []).filter(
       (task) =>
         task.date === date &&
         (!search.trim() ||
@@ -265,14 +265,14 @@ export const CalendarGrid: React.FC<Props> = ({
             >
               <div className='day-number'>{cell.label}</div>
 
-              {/* Праздник */}
+              {/* Holiday */}
               {holiday && (
                 <div className='holiday'>
                   {holiday.localName || holiday.name}
                 </div>
               )}
 
-              {/* Задачи */}
+              {/* Tasks */}
               <TaskList>
                 {filteredTasks
                   .sort((a, b) => a.order - b.order)
@@ -299,13 +299,26 @@ export const CalendarGrid: React.FC<Props> = ({
                           style={{ width: "90%" }}
                         />
                       ) : (
-                        task.text
+                        <>
+                          {task.text}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setTasks((prev) =>
+                                prev.filter((t) => t.id !== task.id)
+                              );
+                            }}
+                            title='Delete'
+                          >
+                            ×
+                          </button>
+                        </>
                       )}
                     </TaskItem>
                   ))}
               </TaskList>
 
-              {/* Поле ввода задачи */}
+              {/* Add Task Input */}
               {!editingTaskId &&
                 editingDate === cell.date &&
                 editingDate !== null && (
@@ -316,9 +329,15 @@ export const CalendarGrid: React.FC<Props> = ({
                       autoFocus
                       value={inputText}
                       onChange={(e) => setInputText(e.target.value)}
-                      onBlur={() => setEditingDate(null)}
+                      onBlur={() => {
+                        if (inputText.trim()) handleAddTask(cell.date!);
+                        setEditingDate(null);
+                      }}
                       onKeyDown={(e) => {
-                        if (e.key === "Enter") handleAddTask(cell.date!);
+                        if (e.key === "Enter") {
+                          handleAddTask(cell.date!);
+                          setEditingDate(null);
+                        }
                       }}
                     />
                   </TaskInputWrapper>

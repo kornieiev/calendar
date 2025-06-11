@@ -1,6 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { CalendarGrid } from "./components/CalendarGrid";
+import { loadTasks, saveTasks } from "./utils/storage";
+import { fetchCountries, fetchUserCountry, fetchHolidays } from "./api";
 import "./App.css";
+import type { Holiday, Task } from "./types";
 
 function getToday(): [number, number, number] {
   const now = new Date();
@@ -13,25 +16,39 @@ function App() {
   const [countries, setCountries] = useState<
     { countryCode: string; name: string }[]
   >([]);
-  console.log("countries", countries);
   const [selectedCountry, setSelectedCountry] = useState<string>("");
-  const [holidays, setHolidays] = useState<any[]>([]);
+  const [holidays, setHolidays] = useState<Holiday[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
 
+  const isFirstLoad = useRef(true);
+
+  // Load tasks from localStorage on startup
   useEffect(() => {
-    fetch("https://date.nager.at/api/v3/AvailableCountries")
-      .then((res) => res.json())
-      .then((data) => {
-        setCountries(data);
-        fetch("https://ipapi.co/json/")
-          .then((res) => res.json())
-          .then((geo) => {
-            const found = data.find((c: any) => c.countryCode === geo.country);
-            console.log("found", found);
-            setSelectedCountry(
-              found ? found.countryCode : data[0]?.countryCode || ""
-            );
-          });
+    setTasks(loadTasks());
+  }, []);
+
+  // Save tasks in localStorage when modified, except for the first renderer
+  useEffect(() => {
+    if (isFirstLoad.current) {
+      isFirstLoad.current = false;
+      return;
+    }
+    saveTasks(tasks);
+  }, [tasks]);
+
+  // Receiving the list of countries and check for current user country
+  useEffect(() => {
+    fetchCountries().then((data) => {
+      setCountries(data);
+      fetchUserCountry().then((geo) => {
+        const found = data.find(
+          (c: { countryCode: string }) => c.countryCode === geo.country
+        );
+        setSelectedCountry(
+          found ? found.countryCode : data[0]?.countryCode || ""
+        );
       });
+    });
   }, []);
 
   const [selectedDate, setSelectedDate] = useState<[number, number]>([
@@ -39,15 +56,11 @@ function App() {
     today[1],
   ]);
 
-  // Получение праздников при изменении года или страны
+  // Receiving holidays when changing the year or country
   useEffect(() => {
     if (!selectedCountry) return;
     const year = selectedDate[0];
-    fetch(
-      `https://date.nager.at/api/v3/PublicHolidays/${year}/${selectedCountry}`
-    )
-      .then((res) => res.json())
-      .then((data) => setHolidays(data));
+    fetchHolidays(year, selectedCountry).then(setHolidays);
   }, [selectedCountry, selectedDate]);
 
   return (
@@ -60,6 +73,8 @@ function App() {
         selectedCountry={selectedCountry}
         setSelectedCountry={setSelectedCountry}
         holidays={holidays}
+        tasks={tasks}
+        setTasks={setTasks}
       />
     </>
   );

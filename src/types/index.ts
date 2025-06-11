@@ -13,4 +13,16 @@ interface Task {
   color?: string;
 }
 
-export type { DayCell, Task };
+interface Holiday {
+  date: string;
+  localName: string;
+  name: string;
+  countryCode: string;
+  fixed: boolean;
+  global: boolean;
+  counties: string[] | null;
+  launchYear: number | null;
+  types: string[];
+}
+
+export type { DayCell, Task, Holiday };
