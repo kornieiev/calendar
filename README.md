@@ -1,54 +1,51 @@
-# React + TypeScript + Vite
+# Custom Calendar App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a **custom calendar application** built with React and TypeScript, **without using any third-party calendar libraries**.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Automatic Localization**: On load, the app detects the user's country and current date, displaying relevant holidays and information immediately.
+- **Selector Menus**: Easily switch between countries and years (date range: 2020–2030) using the dropdown selectors above the calendar.
+- **Add Tasks**: Double-click any calendar date to open an input field. Enter your task and either press Enter or click anywhere outside the input to save.
+- **Drag & Drop**: Click and hold a task to drag it to another date. The target cell is highlighted for convenience.
+- **Task Filtering**: Use the filter option above the calendar to quickly find tasks by text.
+- **Persistent Storage**: All tasks are saved in your browser's localStorage, so your data remains after page reloads.
+- **No Calendar Libraries**: All calendar logic and rendering are implemented from scratch.
 
-## Expanding the ESLint configuration
+## Usage
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Double-click a date to add a task.
+- Press Enter or click outside the input to save the task.
+- Drag and drop tasks between dates.
+- Use the filter input to search for tasks.
+- Change country or year using the selectors above the calendar.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+> **Note:** For demo purposes, the selectable date range is limited to 2020–2030.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Enjoy using the calendar!
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+# Кастомний Календар
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+Це **кастомний застосунок-календар**, створений на React та TypeScript **без використання сторонніх бібліотек для роботи з календарем**.
+
+## Можливості
+
+- **Автоматична локалізація**: При завантаженні застосунок визначає країну користувача та поточну дату, одразу відображаючи актуальні свята та інформацію.
+- **Меню вибору**: Легко перемикайте країну та рік (діапазон дат: 2020–2030) за допомогою селекторів над календарем.
+- **Додавання записів**: Двічі клікніть на будь-яку дату календаря, щоб відкрити поле для введення. Введіть запис і натисніть Enter або клікніть мишею поза полем для збереження.
+- **Drag & Drop**: Затисніть запис мишею, щоб перетягнути його на іншу дату. Цільова комірка підсвічується для зручності.
+- **Фільтрація записів**: Використовуйте поле фільтрації над календарем для швидкого пошуку записів за текстом.
+- **Збереження у localStorage**: Усі записи зберігаються у localStorage браузера, тому не зникають після перезавантаження сторінки.
+- **Без бібліотек календаря**: Уся логіка та відображення календаря реалізовані з нуля.
+
+## Використання
+
+- Двічі клікніть на дату для додавання запису.
+- Натисніть Enter або клікніть поза полем для збереження запису.
+- Перетягуйте записи між датами.
+- Використовуйте фільтр для пошуку записів.
+- Змінюйте країну або рік за допомогою селекторів над календарем.
+
+> **Примітка:** Для тестового використання діапазон дат обмежено 2020–2030 роками.
+
+Приємного користування календарем!
